@@ -21,6 +21,9 @@ def balance(s):
     
     return "".join(str_array).replace("#", "")
 
+def balance_two_ptr(s):
+    return
+
 
 # main
 ex1 = "(()(()"
