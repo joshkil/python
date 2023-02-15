@@ -1,5 +1,19 @@
-# Given a list of tasks, determine if there is a valid schedule to complete
-# them and the total running time (duration) to complete all tasks. 
+# Given a list of tasks, determine the total running time (duration) to 
+# complete all tasks. Assume there is no limit to the number of concurrent
+# tasks you can run. 
+#
+# Example: 
+# [ 
+#   {'id': 1, 'duration': 1, 'dependencies': []}, 
+#   {'id': 2, 'duration': 2, 'dependencies': [1]}, 
+#   {'id': 3, 'duration': 1, 'dependencies': [2,5]}, 
+#   {'id': 4, 'duration': 3, 'dependencies': [1]}, 
+#   {'id': 5, 'duration': 1, 'dependencies': [2]}, 
+# ]
+# 
+# ANSWER: 5
+# Why? Execution path 1->2->5->3 is longest path with total duration of 5
+#  
 
 class Task:
     def __init__(self, id, duration, dependencies):
@@ -19,4 +33,16 @@ task_list.append(Task(2, 2, [1]))
 task_list.append(Task(3, 1, [2, 5]))
 task_list.append(Task(4, 3, [1]))
 task_list.append(Task(5, 1, [2]))
+
+task_list_2 = [ 
+  {'id': 1, 'duration': 1, 'dependencies': []}, 
+  {'id': 2, 'duration': 2, 'dependencies': [1]}, 
+  {'id': 3, 'duration': 1, 'dependencies': [2,5]}, 
+  {'id': 4, 'duration': 3, 'dependencies': [1]}, 
+  {'id': 5, 'duration': 1, 'dependencies': [2]}, 
+]
+
+
+
+
 

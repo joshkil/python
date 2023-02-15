@@ -3,10 +3,27 @@ import copy
 import heapq
 
 # Given a list of tasks, determine if there is a valid schedule to complete
-# them and the total running time (duration) to complete all tasks. 
+# them and the total running time (duration) to complete all tasks. In our
+# task list, if a task lists dependencies, it means the task cannot be 
+# completed until all its dependencies are completed. 
+#
+# Example: 
+# [ 
+#   {id: 1, duration: 1, dependencies: []}, 
+#   {id: 2, duration: 2, dependencies: [1]}, 
+#   {id: 3, duration: 1, dependencies: [2,5]}, 
+#   {id: 4, duration: 3, dependencies: [1]}, 
+#   {id: 5, duration: 1, dependencies: [2]}, 
+# ]
+# 
+# ANSWER: 5
+# Why? Execution path 1->2->5->3 is longest path with total duration of 5
+#  
 
-# TODO: cycle detection (ordered dictionary)
-# TODO: add priority queue to execution plan
+# TODO: Remove cycle detection from calculate method
+# TODO: Add a dfs version of topo sort
+# TODO: Create a dictionary of running tasks an decrement runtime using
+#       shortest tasks from priority queue. :)  
 
 class Task:
     def __init__(self, id, duration, dependencies):
@@ -69,7 +86,7 @@ def calculate_runtime(task_list):
     
     return max_duration
 
-def show_execution_plan(task_list): # consider using a priority list to show start-times
+def show_execution_plan(task_list): 
     start_tasks = list()
     task_graph = collections.defaultdict(list)
 
@@ -101,48 +118,37 @@ def show_execution_plan(task_list): # consider using a priority list to show sta
         ready_to_run.clear()
         ready_to_run.extend(ready_children)
 
-def show_execution_plan_2(task_list): # consider using a priority list to show start-times
-    start_tasks = list()
-    task_graph = collections.defaultdict(list)
+def khan_topological(task_list): 
+    # Detect if there is a valid topological sorting for this graph
+    # If such a sorting exists, all nodes can be reached and there are
+    # no cycles. 
 
-    for task in task_list:
-        if len(task.dependencies) == 0:
-            start_tasks.append(task)
-        else:
-            for d in task.dependencies:
-                task_graph[d].append(task)
+    # Compute n-degree and build adjacency list
+    # Careful here! The Dependencies of a task are its in-edges
+    # not its out-edges. 
+    ndegree = collections.defaultdict(int)
+    adj = collections.defaultdict(list)
+    q = collections.deque()
+    for t in task_list:
+        if len(t.dependencies) == 0: 
+            q.append(t.id)  # no incoming edges
+        else: 
+            ndegree[t.id]+=len(t.dependencies)
+            for d in t.dependencies:
+                # remember, dependencies are the 'in' edges 
+                adj[d].append(t.id) 
 
-    completed = set()
-    priority_q = list()
-
-    while(len(start_tasks) > 0):
-        # print tasks that are starting in this round
-        for task in start_tasks:
-            print(task.id, end=" ")
-            heapq.heappush(priority_q, (task.duration, task))
-        start_tasks.clear()
-        print()
-
-        # find all running tasks with earliest duration
-        completed_tasks_round = list()
-        t = heapq.heappop(priority_q)
-        completed_tasks_round.append(t[1])
-        completed.add(t[1].id)
-        while(len(priority_q) > 0 and t[0] == priority_q[0][0]):
-            t = heapq.heappop(priority_q)
-            completed_tasks_round.append(t[1])
-            completed.add(t[1].id)
-
-        # process completed tasks 
-        for task in completed_tasks_round:
-            for child in task_graph[task.id]:
-                if completed >= set(child.dependencies):
-                    # the operation above is a set comparison.
-                    # it is true if all members of the right-hand 
-                    # set are also members of the left-hand set.
-                    # https://docs.python.org/3/library/stdtypes.html#set
-                    start_tasks.append(child)
-  
+    topo_order = list()
+    while len(q) != 0: 
+        node = q.popleft()
+        topo_order.append(node)
+        for d in adj[node]: 
+            ndegree[d]-=1
+            if ndegree[d] == 0: 
+                q.append(d)
+    
+    print("topo order: ", topo_order)
+    return len(topo_order) == len(task_list)
 
 task_list = list()
 task_list.append(Task(1, 1, []))
@@ -151,14 +157,13 @@ task_list.append(Task(3, 1, [2, 5]))
 task_list.append(Task(4, 3, [1]))
 task_list.append(Task(5, 1, [2]))
 
+
 run_time = calculate_runtime(task_list)
 if(run_time >= 0):  
     print("Total RunTime: {}".format(calculate_runtime(task_list)))
     print("Execution Plan:")
     show_execution_plan(task_list)
-    print("Execution Plan:")
-    show_execution_plan_2(task_list)
 else:
     print("Invalid Task Graph! Loop Detected")
 
-
+print("Khan Result: ", khan_topological(task_list))
