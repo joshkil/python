@@ -1,9 +1,9 @@
 #
-# There exists a busy librarian with a bad knee. When patrons arrive 
+# There exists a busy librarian with a bad knee. When customers arrive 
 # at his counter, they request a magazine. They immediately read it 
-# and return it before he helps the next patron. Behind his counter 
+# and return it before he helps the next customer. Behind his counter 
 # there is a shelf where he can store N magazines for quick access, 
-# but if the magaine requested by the patron is not on the shelf behind 
+# but if the magaine requested by the customer is not on the shelf behind 
 # him, he needs to step away from the desk and walk down long corridors 
 # searching the stacks for the magazine requested. He needs to make 
 # the best use of his temporary storage shelf possible.
@@ -17,21 +17,18 @@
 # requests. Based on the incoming requests, make use of the temporary 
 # storage shelf behind the counter to reduce trips to the stacks. 
 #
-# At any time the librarian can remove a magazine from his temporary 
-# shelf. You can imagine that it is instantly returned to the permanent 
-# stacks once he removes it from his shelf. 
-#
 # Example: 
 # N = 3
 # Requests = [1, 2, 3, 1, 4, 2, 5]
 # Answer: One answer is 6 
-# Trip #    Self Contents
-# 1         [1]
-# 2         [1,2]
-# 3         [1,2,3]
-# 4         [3,1,4]
-# 5         [1,4,2]
-# 6         [4,2,5]
+# Req #     Trip #    Self Contents
+# 1          1         [1]
+# 2          2         [1,2]
+# 3          3         [1,2,3]
+# 4          -          ^
+# 5          4         [3,1,4]
+# 6          5         [1,4,2]
+# 7          6         [4,2,5]
 
 
 # self_size   : the number of magazines the librarian can keep 
@@ -42,4 +39,4 @@ def compute_trips(shelf_size, request_itr):
     return 0
 
 requests = [1, 2, 3, 1, 4, 2, 5]
-compute_trips(3, iter(requests))
+print(compute_trips(3, iter(requests)))
