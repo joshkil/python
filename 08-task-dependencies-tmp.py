@@ -12,7 +12,7 @@
 # ]
 # 
 # ANSWER: 5
-# Why? Execution path 1->2->5->3 is longest path with total duration of 5
+# Why? Execution sequence 1->2->5->3 is longest with total duration of 5
 #  
 
 class Task:
@@ -41,8 +41,3 @@ task_list_2 = [
   {'id': 4, 'duration': 3, 'dependencies': [1]}, 
   {'id': 5, 'duration': 1, 'dependencies': [2]}, 
 ]
-
-
-
-
-
